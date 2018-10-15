@@ -1,0 +1,36 @@
+﻿<?xml version="1.0"?>
+<settings>
+   
+  <!-- for detailed info about the settings see http://webgrabplus.com/documentation/configuration/webgrabconfigxml -->
+   
+  <filename>/data/guide.xml</filename>
+  <mode>m,n</mode>
+  <postprocess grab="y" run="n">mdb</postprocess>
+  <user-agent>Mozilla/5.0 (Windows NT 6.1; WOW64; rv:29.0) Gecko/20100101 Firefox/29.0</user-agent>
+  <logging>on</logging>
+  <retry time-out="35">1</retry>
+  <timespan>7</timespan>
+  <update>s</update>
+
+
+    <channel update="i" site="horizon.tv" site_id="DE/deu_29438503006__https://wp27-images-de-dynamic.horizon.tv/ChannelLogos/02/rtl_crime_hd_2.png" xmltv_id="RTL Crime HD">RTL Crime HD</channel>
+    <channel update="i" site="horizon.tv" site_id="DE/deu_427555366999__https://wp22-images-de-dynamic.horizon.tv/ChannelLogos/02/fox_hd_3.png" xmltv_id="Fox HD">Fox HD</channel>
+    <channel update="i" site="horizon.tv" site_id="DE/deu_29438502994__https://wp6-images-de-dynamic.horizon.tv/ChannelLogos/02/prosieben_fun_hd.png" xmltv_id="ProSieben Fun HD">ProSieben Fun HD</channel>
+    <channel update="i" site="m.tvtoday.de" site_id="pro7m" xmltv_id="ProSieben MAXX">ProSieben MAXX</channel>
+  <!-- SKY -->
+    <channel update="i" site="m.tvtoday.de" site_id="CIN" xmltv_id="Sky Cinema">Sky Cinema</channel>
+    <channel update="i" site="m.tvtoday.de" site_id="CIN1" xmltv_id="Sky Cinema+1">Sky Cinema+1</channel>
+    <channel update="i" site="m.tvtoday.de" site_id="CIN24" xmltv_id="Sky Cinema+24">Sky Cinema+24</channel>
+    <channel update="i" site="m.tvtoday.de" site_id="SKY-C" xmltv_id="Sky Comedy">Sky Comedy</channel>
+    <channel update="i" site="m.tvtoday.de" site_id="SKY-E" xmltv_id="Sky Emotion">Sky Emotion</channel>
+    <channel update="i" site="m.tvtoday.de" site_id="SKY-F" xmltv_id="Sky Family">Sky Family</channel>
+    <channel update="i" site="horizon.tv" site_id="DE/deu_29438502960__https://wp18-images-de-dynamic.horizon.tv/ChannelLogos/02/Sky_Cinema_SpiderMan_HD.png" xmltv_id="Sky Cinema Hits HD">Sky Cinema Hits HD</channel>
+    <channel update="i" site="horizon.tv" site_id="DE/deu_342570535345__https://wp24-images-de-dynamic.horizon.tv/ChannelLogos/02/sky_cinema_action_hd_v2.png" xmltv_id="Sky Action HD">Sky Action HD</channel>
+  <!--
+    <channel update="i" site="tvtoday.de" site_id="FOX" xmltv_id="FOX">FOX</channel>
+    <channel update="i" site="tvtoday.de" site_id="RTL-C" xmltv_id="RTL Crime">RTL Crime</channel>
+    <channel update="i" site="tvtoday.de" site_id="PRO7F" xmltv_id="ProSieben Fun">ProSieben Fun</channel>
+    <channel update="i" site="tvtoday.de" site_id="PRO7M" xmltv_id="ProSieben MAXX">ProSieben MAXX</channel>
+    <channel update="i" site="horizon.tv" site_id="DE/deu_342570535343__https://wp28-images-de-dynamic.horizon.tv/ChannelLogos/02/pro7_maxx_hd.png" xmltv_id="ProSieben MAXX HD">ProSieben MAXX HD</channel>
+  -->
+</settings>
