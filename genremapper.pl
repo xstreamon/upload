@@ -5,7 +5,7 @@
 ## DeBaschdi ##
 ## takealug.de ##
 
-## Hier werden Die EIT NORM Genre Aufgeführt und definiert##
+## Hier werden Die EIT NORM Genre AufgefÃ¼hrt und definiert##
 my $MOVIE             =    "Movie / Drama";
 my $THRILLER          =    "Detective / Thriller";
 my $ADVENTURE         =    "Adventure / Western / War";
@@ -133,10 +133,10 @@ my %REPLACE=(
  "Spielfilm/Horror"  => $SF ,               
  "Spielfilm/Fantasy"  => $SF ,              
  "Fantasyfilm" => $SF ,
- "Komödie"  => $COMEDY ,           
- "Teenagerkomödie" => $COMEDY ,
- "Fantasykomödie" => $COMEDY ,
- "Familienkomödie" => $COMEDY ,
+ "KomÃ¶die"  => $COMEDY ,           
+ "TeenagerkomÃ¶die" => $COMEDY ,
+ "FantasykomÃ¶die" => $COMEDY ,
+ "FamilienkomÃ¶die" => $COMEDY ,
  "Spielfilm/Comedy"  => $COMEDY ,           
  "Serie/Comedy"  => $COMEDY ,           
  "Unterhaltung/Comedy" => $COMEDY ,           
@@ -203,9 +203,9 @@ my %REPLACE=(
   "Sport/Besondere Ereignisse"  => $SPORT_SPECIAL ,    
   "Sport Magazin"  => $SPORT_MAGAZINE ,   
    "Sport/Reportage"  => $SPORT_MAGAZINE ,   
- "Fußball"  => $FOOTBALL ,         
+ "FuÃŸball"  => $FOOTBALL ,         
  "Fussball"  => $FOOTBALL ,         
- "Sport/Fußball"  => $FOOTBALL ,         
+ "Sport/FuÃŸball"  => $FOOTBALL ,         
  "Squash"  => $FOOTBALL ,         
  "Sport/Squash"  => $FOOTBALL ,         
  "Tennis"  => $TENNIS ,           
@@ -229,13 +229,13 @@ my %REPLACE=(
  "Kampfsport" => $MARTIAL ,
  "Judo" => $MARTIAL ,
  "Sport/Kampfsport" => $MARTIAL ,
- "Bogenschießen"  => $SPORT_SPECIAL ,
+ "BogenschieÃŸen"  => $SPORT_SPECIAL ,
 
  "Kinder"  => $KIDS ,             
  "Jugend"  => $KIDS ,             
  "Kinderfilm" => $KIDS ,
  "Jugendfilm" => $KIDS ,
- "Märchenfilm" => $KIDS ,
+ "MÃ¤rchenfilm" => $KIDS ,
  "Kinder/Jugend/Serien" => $KIDS ,             
   "Kinderabenteuer" => $KIDS ,             
  "Kinder/Jugend/Show" => $KIDS ,             
@@ -279,12 +279,12 @@ my %REPLACE=(
  "Kultur"  => $CULTURE ,         
  "Darstellende Kunst"  => $PERFORMING ,       
  "Darst. Kunst"  => $PERFORMING ,       
- "Porträt"  => $PERFORMING ,       
+ "PortrÃ¤t"  => $PERFORMING ,       
   "Portrait"  => $PERFORMING ,       
  "Bildende Kunst"  => $FINE_ARTS ,        
  "Religion"  => $RELIGION ,         
  "Themen/Religion"  => $RELIGION ,         
- "Populäre Kunst"  => $POPULAR_ART ,      
+ "PopulÃ¤re Kunst"  => $POPULAR_ART ,      
  "Literatur"  => $LITERATURE ,       
  "Literaturmagazin" => $LITERATURE ,
  "Film"  => $FILM ,             
@@ -300,7 +300,7 @@ my %REPLACE=(
  "Themen/Wissenschaft"  => $ECONOMIC ,         
  "Wirtschaft"  => $ECONOMIC ,         
  "Themen/Wirtschaft"  => $ECONOMIC ,         
- "Berühmte Leute"  => $VIP ,              
+ "BerÃ¼hmte Leute"  => $VIP ,              
 
  "Weiterbildung"  => $SCIENCE ,          
  "Bildung"  => $SCIENCE ,          
@@ -331,39 +331,130 @@ my %REPLACE=(
  "Unterhaltung/Kochen"  => $COOKING ,          
  "Shopping"  => $SHOPPING ,         
 "Mode"  => $GARDENING ,        
- "Liveübertragung"  => $LIVE ,        
+ "LiveÃ¼bertragung"  => $LIVE ,        
 "Undefiniert" => $NONE ,
 
  ) ; 
 
-my $PRE  = '<category lang=\"de\">' ;
+my $PRE  = '<category( lang=\"([a-z]+)\"|)>' ;
 my $POST = '</category>'  ;
 
 sub myfilter {
-  my ($a) = @_;
+  my ($lang,$name) = @_;
+  $name =~ s/\W//g;
+  $lang="de"  if ( $lang eq "" ) ;   # Default language is "en" when is no lang attribute
+  my $a = "$lang:$name" ; 
   if ( exists $REPLACE{$a} ) {     
+      
       return $REPLACE{$a} ;
+  } elsif ( $lang eq "en" ) {    
+      print STDERR "Warning: Unmanaged category #1: '$a'\n" ;
+      return $name ;   # For English, assume that missing entries are fine
   } else {
-      print STDERR "Warning: Unmanaged category: '$a'\n" ;
-      return $a ;
+      print STDERR "Warning: Unmanaged category #2: '$a'\n" ;
+      return $name ;
   }
 }
 
+# read the xml file and update the info
+my $num_args = $#ARGV + 1;
+if ($num_args != 1) {
+  print STDERR "\nArg=$num_args Usage: <script> <xmlfile>\n";
+  exit;
+}
+my $xmlfile=$ARGV[0];
+my $parser=new XML::DOM::Parser;
+print STDERR "Reading XML file\n";
+my $doc=$parser->parsefile($xmlfile) or die$!;
+print STDERR "Parsing Sections\n";
+my $root=$doc->getDocumentElement();
+my @program=$root->getElementsByTagName("programme");
+foreach my $program(@program) {
 
-while (<>) {
+  my $dateElement=$program->getElementsByTagName("date")->item(0);
+  my $date;
+  if ( defined $dateElement ) {
+    $date=$dateElement->getFirstChild()->getData();
+    if (length($date) == 8) {
+      $date = substr($date,0,4) . "/" . substr($date,4,2) . "/" . substr($date,6,2);
+    }
+  }
+
+  my $descadd='';
+  if ( defined $date ) {
+    $descadd='(' . $date . ') ';
+  }
+  my @episodenum=$program->getElementsByTagName("episode-num");
+  my $se;
+  foreach my $episodenum(@episodenum) {
+    if ($episodenum->getAttribute("system") eq "common") {
+      $se=$episodenum->getFirstChild()->getData();
+    } elsif (($episodenum->getAttribute("system") eq "dd_progid") 
+         && (!defined $se)) {
+
+      my $dd_prog_id=$episodenum->getFirstChild()->getData();
+      if ( $dd_prog_id =~ /^(..\d{8}).(\d{4})/ ) {
+        # EP12345678.1234
+        my $dd_e=$2;
+        my $dd_s=$1;
+        if (int($dd_e) > 0) {
+          $se = sprintf("E%03d", int($dd_e));
+        }
+      }
+    }
+  }
+
+  my @category=$program->getElementsByTagName("category");
+  foreach my $category(@category) {
+    $descadd=$descadd . $category->getFirstChild()->getData() . ' / ';
+  }
+  if ( defined $se ) {
+    $descadd=$descadd . ' ' . $se;
+  }
+
+  # update the desc with year, season, episode and genre data
+  my $descElement=$program->getElementsByTagName("desc")->item(0);
+  my $desc='';
+  if ( defined $descElement ) {
+    $desc=$descElement->getFirstChild()->getData();
+    $desc=$descadd . "\n" . $desc;
+    $descElement->getFirstChild()->setNodeValue($desc);
+
+  } else {
+    if ( defined $descadd ) {
+      # need to add a desc node
+      $descElement=$doc->createElement('desc');
+      my $textElement=$doc->createTextNode($descadd);
+      $descElement->appendChild($textElement);
+      $program->appendChild($descElement);
+    }
+  }
+
+  # update subtitle with date
+  my $subtitleElement=$program->getElementsByTagName("sub-title")->item(0);
+  my $subtitle;
+  if ( defined $subtitleElement ) {
+    if (defined $se ) {
+      $subtitle=$subtitleElement->getFirstChild()->getData();
+      $subtitle=$se . ' ' . $subtitle;
+      $subtitleElement->getFirstChild()->setNodeValue($subtitle);
+    }
+  }
+
+}
+print STDERR "Pass 1 complete\n";
+my $tempfile="/tmp/xmltv.xml_temp";
+$doc->printToFile($tempfile);
+$doc->dispose;
+open(my $FN, '<', $tempfile) or die "unable to open file, $!";
+
+print STDERR "Updating Genre\n";
+while (<$FN>) {
     my $line = $_ ;
-    if ($line =~ /'(n)'/)
-       {       
-        $line =~ tr/\(n)//;
-       }    
-    if ($line =~ /parentId/)
-       {
-        @fields = split/,/, $line;
-           $zeile = $fields[0];
-           $anhang = $zeile."</sub-title>\n";
-           $line = $anhang;
-       }
-
-        $line =~ s/($PRE)(.*)($POST)/"$1".myfilter("$2")."$3"/ge ;
+    # Warning $PRE contains 2 hidden level of parenthesis
+    #  
+    $line =~ s/($PRE)(.*)($POST)/"$1".myfilter($3,$4)."$5"/ge ;
     print $line;
 } 
+close($FN);
+unlink $tempfile;
